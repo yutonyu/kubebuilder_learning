@@ -17,8 +17,9 @@ limitations under the License.
 package v1
 
 import (
+	batchv1 "k8s.io/api/batch/v1"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	corev1  "k8s.io/api/core/v1"
 )
 
 // ConcurrencyPolicy describes how the job will be handled.
@@ -41,7 +42,7 @@ const (
 )
 
 // Next we define the types corrspodnng to actual kinds. CronJob and Cronjob list.
-// 
+//
 // CronJobSpec defines the desired state of CronJob
 // A deadline for starting jobs ( if we miss the deadline, we will just wait till the next scheduled time)
 // What to do if multiple jobs would run at once
@@ -65,28 +66,27 @@ type CronJobSpec struct {
 	// +optional
 	ConcurrencyPolicy ConcurrencyPolicy `json:"concurrencyPolicy,omitempty"`
 
-  // This flag tells the controller to suspend subsequent executions, it does
-  // not apply to already started executions.  Defaults to false.
-  // +optional
-  Suspend *bool `json:"suspend,omitempty"`
+	// This flag tells the controller to suspend subsequent executions, it does
+	// not apply to already started executions.  Defaults to false.
+	// +optional
+	Suspend *bool `json:"suspend,omitempty"`
 
-  // Specifies the job that will be created when executing a CronJob.
-	// TODO  where is JobTempalteSpec defined?
-  // JobTemplate batchv1.JobTemplateSpec `json:"jobTemplate"`
+	// Specifies the job that will be created when executing a CronJob.
+	JobTemplate batchv1.JobTemplateSpec `json:"jobTemplate"`
 
-  //+kubebuilder:validation:Minimum=0
+	//+kubebuilder:validation:Minimum=0
 
-  // The number of successful finished jobs to retain.
-  // This is a pointer to distinguish between explicit zero and not specified.
-  // +optional
-  SuccessfulJobsHistoryLimit *int32 `json:"successfulJobsHistoryLimit,omitempty"`
+	// The number of successful finished jobs to retain.
+	// This is a pointer to distinguish between explicit zero and not specified.
+	// +optional
+	SuccessfulJobsHistoryLimit *int32 `json:"successfulJobsHistoryLimit,omitempty"`
 
-  //+kubebuilder:validation:Minimum=0
+	//+kubebuilder:validation:Minimum=0
 
-  // The number of failed finished jobs to retain.
-  // This is a pointer to distinguish between explicit zero and not specified.
-  // +optional
-  FailedJobsHistoryLimit *int32 `json:"failedJobsHistoryLimit,omitempty"`
+	// The number of failed finished jobs to retain.
+	// This is a pointer to distinguish between explicit zero and not specified.
+	// +optional
+	FailedJobsHistoryLimit *int32 `json:"failedJobsHistoryLimit,omitempty"`
 }
 
 // We will keep a list of actively running jobs, as well as the last time
@@ -94,13 +94,12 @@ type CronJobSpec struct {
 // CronJobStatus defines the observed state of CronJob
 type CronJobStatus struct {
 	// A list of pointers to currently running jobs.
-    // +optional
-    Active []corev1.ObjectReference `json:"active,omitempty"`
+	// +optional
+	Active []corev1.ObjectReference `json:"active,omitempty"`
 
-    // Information when was the last time the job was successfully scheduled.
-    // +optional
-    LastScheduleTime *metav1.Time `json:"lastScheduleTime,omitempty"`
-
+	// Information when was the last time the job was successfully scheduled.
+	// +optional
+	LastScheduleTime *metav1.Time `json:"lastScheduleTime,omitempty"`
 }
 
 //+kubebuilder:object:root=true
@@ -108,7 +107,7 @@ type CronJobStatus struct {
 
 // CronJob is the Schema for the cronjobs API
 type CronJob struct {
-	metav1.TypeMeta   `json:",inline"`  // describes api version and kind
+	metav1.TypeMeta   `json:",inline"`            // describes api version and kind
 	metav1.ObjectMeta `json:"metadata,omitempty"` // holds things like name, namespce and labels.
 
 	Spec   CronJobSpec   `json:"spec,omitempty"`
