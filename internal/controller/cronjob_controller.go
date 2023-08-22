@@ -84,7 +84,7 @@ func (r *CronJobReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 	}
 
 	var childJobs kbatch.JobList
-	if err := r.List(ctx, &childJobs, client.InNamespace(req.Namespace), client.MatchingFields{"jobOwnerKey": req.Name}); err != nil {
+	if err := r.List(ctx, &childJobs, client.InNamespace(req.Namespace), client.MatchingFields{jobOwnerKey: req.Name}); err != nil {
 		log.Error(err, "unable to list child Jobs")
 		return ctrl.Result{}, err
 	}
@@ -369,7 +369,7 @@ func (r *CronJobReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	}
 
 	if err := mgr.GetFieldIndexer().IndexField(context.Background(), &kbatch.Job{}, jobOwnerKey, func(rawObj client.Object) []string {
-		// grab the job object, extract the owner
+		// grab the job object, extract the owner...
 		job := rawObj.(*kbatch.Job)
 		owner := metav1.GetControllerOf(job)
 		if owner == nil {
