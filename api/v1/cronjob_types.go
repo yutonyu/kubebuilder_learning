@@ -57,7 +57,7 @@ type CronJobSpec struct {
 	// Optional deadlien in seconds for startingthe job if it misses scheduled
 	// time for any reason. Missed jobs executions will be counted as failed ones.
 	// + optional
-	StartingDeadlineSeconds *int64 `json:"startingDeadlineSeconds, omitempty"`
+	StartingDeadlineSeconds *int64 `json:"startingDeadlineSeconds,omitempty"`
 
 	// Specifies how to treat concurrent executions of a job.
 	// Valid valiues are:
